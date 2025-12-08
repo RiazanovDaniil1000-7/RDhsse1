@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a38ea492-ddff-492e-8517-15a57de5f1f8" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/RDhsse1.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/IONIOClasses/FileProcessor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/IONIOClasses/TextFileAnalyzer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/AnnReflTests/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/IONIOTests/FileProcessorTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/IONIOTests/TextAnalyzerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Collectionsclasses/CustomArrayList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Collections/CustomArrayList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Collectionsclasses/CustomIterator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Collections/CustomIterator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Collectionsclasses/CustomList.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Collections/CustomList.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Collectionsclasses/MapOperations.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Collections/MapOperations.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Collectionsclasses/Student.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Collections/Student.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/Email.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/Email.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/EmailValidator.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/Notnull.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/NotNull.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/Range.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/Range.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/Size.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/Size.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/ValidationResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/ValidationResult.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/Validator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ReflectionAnnotations/Validator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/AnnReflTests/AllAnnotationsTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/AnnReflTests/EdgeCasesTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/AnnReflTests/ValidatorErrorTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/AnnReflTests/ValidatorSuccessTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/AnnReflTests/ValidatorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/AnnReflTests/ValidatorTest.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="package-info" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="origin/feature/hw10-io" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
+  <component name="ProjectId" id="36O2S1dwJcCeet0zdOW9ACsdAFl" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "JUnit.FileProcessorTest.executor": "Run",
+    "JUnit.TextFileAnalyzerTest.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "feature/hw10-io",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/user/RDhsse1"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a38ea492-ddff-492e-8517-15a57de5f1f8" name="Changes" comment="" />
+      <created>1764863292474</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1764863292474</updated>
+    </task>
+    <servers />
+  </component>
+</project>
