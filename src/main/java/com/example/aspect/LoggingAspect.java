@@ -11,7 +11,7 @@ import java.util.Arrays;
 @Component
 public class LoggingAspect {
 
-    @Pointcut("execution(* com.example.demo.service.*.*(..))")
+    @Pointcut("execution(* com.example.service.*.*(..))")
     public void serviceMethods() {
     }
 
