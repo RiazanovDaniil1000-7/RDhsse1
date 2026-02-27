@@ -1,3 +1,10 @@
 spring:
   application:
     name: demo
+server:
+  port: 8081
+
+app:
+  name: "ToDo-Manager-MVP"
+  version: "1.0.0-SNAPSHOT"
+  description: "Spring Boot Homework Application"

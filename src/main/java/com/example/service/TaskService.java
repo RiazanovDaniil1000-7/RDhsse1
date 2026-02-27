@@ -8,6 +8,7 @@ import jakarta.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,6 +16,10 @@ public class TaskService {
 
     private final Map<Integer, Task> taskCache = new HashMap<>();
     private final TaskRepository taskRepository;
+    @Value("${app.name}")
+    private String applicationName;
+    @Value("${app.version}")
+    private String applicationVersion;
 
     @PostConstruct
     public void initCache() {
@@ -53,11 +58,17 @@ public class TaskService {
     public void addTask(Task task) {
         taskRepository.save(task);
     }
+
     public Task updateTask(int id, Task taskDetails) {
         taskDetails.setId(id);
         return taskRepository.save(taskDetails);
     }
+
     public void deleteTask(int id) {
         taskRepository.deleteById(id);
+    }
+
+    public void printAppInfo() {
+        System.out.println(">>> Running App: " + applicationName + " v" + applicationVersion);
     }
 }
