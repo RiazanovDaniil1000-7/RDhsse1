@@ -1,4 +1,4 @@
-package com.example.processor;
+package com.example.config;
 
 import com.example.repository.TaskRepository;
 import com.example.service.TaskService;

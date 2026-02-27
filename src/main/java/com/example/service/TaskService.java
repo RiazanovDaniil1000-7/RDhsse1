@@ -50,10 +50,13 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    public Task addTask(Task task) {
-        return taskRepository.save(task);
+    public void addTask(Task task) {
+        taskRepository.save(task);
     }
-
+    public Task updateTask(int id, Task taskDetails) {
+        taskDetails.setId(id);
+        return taskRepository.save(taskDetails);
+    }
     public void deleteTask(int id) {
         taskRepository.deleteById(id);
     }
