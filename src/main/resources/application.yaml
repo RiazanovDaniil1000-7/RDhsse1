@@ -19,7 +19,7 @@ spring:
 logging:
   level:
     root: INFO
-    com.example.todo: DEBUG
+    com.example: DEBUG
 
 ---
 
@@ -31,4 +31,4 @@ spring:
 logging:
   level:
     root: WARN
-    com.example.todo: ERROR
+    com.example: ERROR

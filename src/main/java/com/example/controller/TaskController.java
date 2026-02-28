@@ -3,15 +3,11 @@ package com.example.controller;
 import com.example.model.Task;
 import com.example.service.TaskService;
 import com.example.service.TaskStatisticsService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/tasks")
@@ -26,32 +22,49 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAll();
+    public ResponseEntity<List<Task>> getAllTasks() {
+        List<Task> tasks = taskService.getAll();
+        return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/{id}")
-    public Task getById(@PathVariable int id) {
-        return taskService.getById(id);
+    public ResponseEntity<Task> getById(@PathVariable int id) {
+        Task task = taskService.getById(id);
+        if (task == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(task);
     }
+
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable int id, @RequestBody Task task) {
-        return taskService.updateTask(id, task);
+    public ResponseEntity<Task> updateTask(@PathVariable int id, @RequestBody Task task) {
+        if (taskService.getById(id) == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Task updatedTask = taskService.updateTask(id, task);
+        return ResponseEntity.ok(updatedTask);
     }
+
     @PostMapping
-    public String addTask(@RequestBody Task task) {
+    public ResponseEntity<String> addTask(@RequestBody Task task) {
+        if (task.getTitle() == null || task.getTitle().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Title cannot be empty");
+        }
         taskService.addTask(task);
-        return "Задача успешно добавлена";
+        return ResponseEntity.status(HttpStatus.CREATED).body("Задача успешно добавлена");
     }
 
     @DeleteMapping("/{id}")
-    public String deleteTask(@PathVariable int id) {
+    public ResponseEntity<String> deleteTask(@PathVariable int id) {
+        if (taskService.getById(id) == null) {
+            return ResponseEntity.notFound().build();
+        }
         taskService.deleteTask(id);
-        return "Задача удалена.";
+        return ResponseEntity.ok("Задача удалена.");
     }
 
     @GetMapping("/stats")
-    public String getStatistics() {
-        return taskStatisticsService.getComparisonReport();
+    public ResponseEntity<String> getStatistics() {
+        return ResponseEntity.ok(taskStatisticsService.getComparisonReport());
     }
 }

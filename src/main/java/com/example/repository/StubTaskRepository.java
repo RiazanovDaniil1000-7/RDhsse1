@@ -17,7 +17,12 @@ public class StubTaskRepository implements TaskRepository {
 
     @Override
     public Task save(Task task) {
-
+        if (task.getId() == 0) {
+            // Генерация нового ID
+            int newId = tasks.keySet().stream().max(Integer::compare).orElse(0) + 1;
+            task.setId(newId);
+        }
+        tasks.put(task.getId(), task);
         return task;
     }
 
