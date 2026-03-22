@@ -4,18 +4,20 @@ import com.example.model.Task;
 import com.example.repository.TaskRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Service
 public class TaskService {
 
-    private final Map<Integer, Task> taskCache = new ConcurrentHashMap<>(); // Thread-safe
+    private final Map<Integer, Task> taskCache = new ConcurrentHashMap<>();
     private final TaskRepository taskRepository;
 
     @Value("${app.name}")
@@ -26,18 +28,18 @@ public class TaskService {
 
     @PostConstruct
     public void initCache() {
-        System.out.println(">>> [TaskService]: Выполняется @PostConstruct - загрузка кэша...");
+        log.info(">>> [TaskService]: Выполняется @PostConstruct - загрузка кэша...");
         List<Task> tasks = taskRepository.findAll();
         tasks.forEach(task -> taskCache.put(task.getId(), task));
-        System.out.println(">>> [TaskService]: Кэш инициализирован. Количество задач: " + taskCache.size());
+        log.info(">>> [TaskService]: Кэш инициализирован. Количество задач: {}", taskCache.size());
     }
 
     @PreDestroy
     public void cleanup() {
-        System.out.println("<<< [TaskService]: Выполняется @PreDestroy...");
-        System.out.println("<<< [TaskService]: Всего задач в кэше перед удалением: " + taskCache.size());
+        log.info("<<< [TaskService]: Выполняется @PreDestroy...");
+        log.info("<<< [TaskService]: Всего задач в кэше перед удалением: {}", taskCache.size());
         taskCache.clear();
-        System.out.println("<<< [TaskService]: Ресурсы очищены.");
+        log.info("<<< [TaskService]: Ресурсы очищены.");
     }
 
     public TaskService(TaskRepository taskRepository) {
@@ -87,7 +89,13 @@ public class TaskService {
         taskCache.remove(id); // Удаляем из кэша
     }
 
+    public void validateDueDate(LocalDate dueDate, LocalDateTime createdAt) {
+        if (dueDate != null && dueDate.isBefore(createdAt.toLocalDate())) {
+            throw new IllegalArgumentException("Due date cannot be before creation date");
+        }
+    }
+
     public void printAppInfo() {
-        System.out.println(">>> Running App: " + applicationName + " v" + applicationVersion);
+        log.info(">>> Running App: {} v{}", applicationName, applicationVersion);
     }
 }

@@ -7,9 +7,11 @@ import com.example.mapper.TaskMapper;
 import com.example.model.Task;
 import com.example.service.TaskService;
 import com.example.service.TaskStatisticsService;
+import com.example.validation.OnUpdate;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,19 +51,29 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable int id,
-            @RequestBody TaskUpdateDto taskUpdateDto) {
-        Task task = taskService.getById(id);
-        if (task == null) {
+    public ResponseEntity<TaskResponseDto> updateTask(
+            @PathVariable int id,
+            @Validated(OnUpdate.class) @RequestBody TaskUpdateDto updateDto) {
+
+        Task existingTask = taskService.getById(id);
+        if (existingTask == null) {
             return ResponseEntity.notFound().build();
         }
-        Task updatedTask = taskMapper.updateEntity(taskUpdateDto, task);
-        taskService.updateTask(id, updatedTask);
+        // Валидация dueDate относительно createdDate
+        if (updateDto.getDueDate() != null &&
+                updateDto.getDueDate().isBefore(existingTask.getCreatedAt().toLocalDate())) {
+            return ResponseEntity.badRequest()
+                    .body(null);
+        }
+
+        taskMapper.updateEntity(updateDto, existingTask);
+        Task updatedTask = taskService.updateTask(id, existingTask);
+
         return ResponseEntity.ok(taskMapper.toResponseDto(updatedTask));
     }
 
     @PostMapping
-    public ResponseEntity<TaskResponseDto> addTask(@RequestBody TaskCreateDto createDto) {
+    public ResponseEntity<TaskResponseDto> addTask(@Validated(OnUpdate.class) @RequestBody TaskCreateDto createDto) {
         if (createDto.getTitle() == null || createDto.getTitle().trim().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
