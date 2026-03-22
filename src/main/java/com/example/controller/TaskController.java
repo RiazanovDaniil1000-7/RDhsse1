@@ -1,8 +1,13 @@
 package com.example.controller;
 
+import com.example.dto.TaskCreateDto;
+import com.example.dto.TaskResponseDto;
+import com.example.dto.TaskUpdateDto;
+import com.example.mapper.TaskMapper;
 import com.example.model.Task;
 import com.example.service.TaskService;
 import com.example.service.TaskStatisticsService;
+import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,43 +20,54 @@ public class TaskController {
 
     private final TaskService taskService;
     private final TaskStatisticsService taskStatisticsService;
+    private final TaskMapper taskMapper;
 
-    public TaskController(TaskService taskService, TaskStatisticsService taskStatisticsService) {
+    public TaskController(TaskService taskService, TaskStatisticsService taskStatisticsService,
+            TaskMapper taskMapper) {
         this.taskService = taskService;
         this.taskStatisticsService = taskStatisticsService;
+        this.taskMapper = taskMapper;
     }
 
     @GetMapping
-    public ResponseEntity<List<Task>> getAllTasks() {
+    public ResponseEntity<List<TaskResponseDto>> getAllTasks() {
         List<Task> tasks = taskService.getAll();
-        return ResponseEntity.ok(tasks);
+        List<TaskResponseDto> responseDtos = tasks.stream()
+                .map(taskMapper::toResponseDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getById(@PathVariable int id) {
+    public ResponseEntity<TaskResponseDto> getById(@PathVariable int id) {
         Task task = taskService.getById(id);
         if (task == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(task);
+        TaskResponseDto responseDto = taskMapper.toResponseDto(task);
+        return ResponseEntity.ok(responseDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(@PathVariable int id, @RequestBody Task task) {
-        if (taskService.getById(id) == null) {
+    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable int id,
+            @RequestBody TaskUpdateDto taskUpdateDto) {
+        Task task = taskService.getById(id);
+        if (task == null) {
             return ResponseEntity.notFound().build();
         }
-        Task updatedTask = taskService.updateTask(id, task);
-        return ResponseEntity.ok(updatedTask);
+        Task updatedTask = taskMapper.updateEntity(taskUpdateDto, task);
+        taskService.updateTask(id, updatedTask);
+        return ResponseEntity.ok(taskMapper.toResponseDto(updatedTask));
     }
 
     @PostMapping
-    public ResponseEntity<String> addTask(@RequestBody Task task) {
-        if (task.getTitle() == null || task.getTitle().trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Title cannot be empty");
+    public ResponseEntity<TaskResponseDto> addTask(@RequestBody TaskCreateDto createDto) {
+        if (createDto.getTitle() == null || createDto.getTitle().trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
         }
+        Task task = taskMapper.toEntity(createDto);
         taskService.addTask(task);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Задача успешно добавлена");
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskMapper.toResponseDto(task));
     }
 
     @DeleteMapping("/{id}")

@@ -11,7 +11,7 @@ public class StubTaskRepository implements TaskRepository {
     private final Map<Integer, Task> tasks = new HashMap<>();
 
     public StubTaskRepository() {
-        tasks.put(1, new Task(1, "Задача 1", "Сделать домашнее задание", false));
+        tasks.put(1, new Task(1, "Задача 1", "Сделать домашнее задание", false, ));
         tasks.put(2, new Task(2, "Задание 2", "Починить холодильник", false));
     }
 
