@@ -21,7 +21,7 @@ public interface TaskMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
-    Task updateEntity(TaskUpdateDto dto, @MappingTarget Task task);
+    void updateEntity(TaskUpdateDto dto, @MappingTarget Task task);
 
     TaskResponseDto toResponseDto(Task task);
 }

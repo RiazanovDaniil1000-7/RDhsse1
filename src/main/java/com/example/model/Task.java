@@ -18,7 +18,7 @@ import lombok.ToString;
 @ToString(exclude = {"createdAt", "dueDate", "priority", "tags"})
 public class Task {
 
-    private int id;
+    private Long id;
     private String title;
     private String description;
     private boolean completed;

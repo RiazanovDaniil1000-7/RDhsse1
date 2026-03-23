@@ -7,63 +7,77 @@ import com.example.mapper.TaskMapper;
 import com.example.model.Task;
 import com.example.service.TaskService;
 import com.example.service.TaskStatisticsService;
+import com.example.validation.OnCreate;
 import com.example.validation.OnUpdate;
-import java.util.stream.Collectors;
+import jakarta.validation.Valid;
+import java.util.ArrayList;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @RestController
 @RequestMapping("/tasks")
+@RequiredArgsConstructor
 public class TaskController {
 
     private final TaskService taskService;
     private final TaskStatisticsService taskStatisticsService;
     private final TaskMapper taskMapper;
 
-    public TaskController(TaskService taskService, TaskStatisticsService taskStatisticsService,
-            TaskMapper taskMapper) {
-        this.taskService = taskService;
-        this.taskStatisticsService = taskStatisticsService;
-        this.taskMapper = taskMapper;
-    }
-
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> getAllTasks() {
         List<Task> tasks = taskService.getAll();
-        List<TaskResponseDto> responseDtos = tasks.stream()
-                .map(taskMapper::toResponseDto)
-                .collect(Collectors.toList());
+        List<TaskResponseDto> responseDtos = new ArrayList<>();
+        for (Task task : tasks) {
+            TaskResponseDto responseDto = taskMapper.toResponseDto(task);
+            responseDtos.add(responseDto);
+        }
         return ResponseEntity.ok(responseDtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDto> getById(@PathVariable int id) {
+    public ResponseEntity<TaskResponseDto> getById(@PathVariable Long id) {
         Task task = taskService.getById(id);
         if (task == null) {
             return ResponseEntity.notFound().build();
         }
-        TaskResponseDto responseDto = taskMapper.toResponseDto(task);
-        return ResponseEntity.ok(responseDto);
+        return ResponseEntity.ok(taskMapper.toResponseDto(task));
+    }
+
+    @PostMapping
+    public ResponseEntity<TaskResponseDto> addTask(
+            @Validated(OnCreate.class) @RequestBody TaskCreateDto createDto) {
+
+        Task task = taskMapper.toEntity(createDto);
+        Task savedTask = taskService.addTask(task);  // ← получаем сохраненную задачу с ID
+
+        log.info("Task created with ID: {}", savedTask.getId());
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(taskMapper.toResponseDto(savedTask));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTask(
-            @PathVariable int id,
+            @PathVariable Long id,
             @Validated(OnUpdate.class) @RequestBody TaskUpdateDto updateDto) {
 
         Task existingTask = taskService.getById(id);
         if (existingTask == null) {
             return ResponseEntity.notFound().build();
         }
+
         // Валидация dueDate относительно createdDate
         if (updateDto.getDueDate() != null &&
                 updateDto.getDueDate().isBefore(existingTask.getCreatedAt().toLocalDate())) {
-            return ResponseEntity.badRequest()
-                    .body(null);
+            return ResponseEntity.badRequest().build();
         }
 
         taskMapper.updateEntity(updateDto, existingTask);
@@ -72,23 +86,15 @@ public class TaskController {
         return ResponseEntity.ok(taskMapper.toResponseDto(updatedTask));
     }
 
-    @PostMapping
-    public ResponseEntity<TaskResponseDto> addTask(@Validated(OnUpdate.class) @RequestBody TaskCreateDto createDto) {
-        if (createDto.getTitle() == null || createDto.getTitle().trim().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        Task task = taskMapper.toEntity(createDto);
-        taskService.addTask(task);
-        return ResponseEntity.status(HttpStatus.CREATED).body(taskMapper.toResponseDto(task));
-    }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTask(@PathVariable int id) {
-        if (taskService.getById(id) == null) {
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        Task existingTask = taskService.getById(id);
+        if (existingTask == null) {
             return ResponseEntity.notFound().build();
         }
+
         taskService.deleteTask(id);
-        return ResponseEntity.ok("Задача удалена.");
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/stats")
