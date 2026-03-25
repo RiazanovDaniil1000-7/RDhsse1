@@ -7,7 +7,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.5.11</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <relativePath/>
   </parent>
   <groupId>com.example</groupId>
   <artifactId>demo</artifactId>
@@ -30,6 +30,7 @@
   <properties>
     <java.version>17</java.version>
     <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+    <springdoc.version>2.8.5</springdoc.version>
   </properties>
   <dependencies>
     <dependency>
@@ -81,6 +82,11 @@
       <version>${org.mapstruct.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -92,7 +98,6 @@
           <source>${java.version}</source>
           <target>${java.version}</target>
           <annotationProcessorPaths>
-            <!-- ВАЖНО: сначала Lombok, потом MapStruct -->
             <path>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
@@ -103,7 +108,6 @@
               <artifactId>mapstruct-processor</artifactId>
               <version>${org.mapstruct.version}</version>
             </path>
-            <!-- Spring Boot configuration processor -->
             <path>
               <groupId>org.springframework.boot</groupId>
               <artifactId>spring-boot-configuration-processor</artifactId>
