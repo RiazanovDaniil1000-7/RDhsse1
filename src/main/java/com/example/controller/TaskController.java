@@ -3,16 +3,18 @@ package com.example.controller;
 import com.example.dto.TaskCreateDto;
 import com.example.dto.TaskResponseDto;
 import com.example.dto.TaskUpdateDto;
+import com.example.exception.TaskNotFoundException;
 import com.example.mapper.TaskMapper;
 import com.example.model.Task;
+import com.example.service.FavoritesService;
 import com.example.service.TaskService;
 import com.example.service.TaskStatisticsService;
 import com.example.validation.OnCreate;
 import com.example.validation.OnUpdate;
-import jakarta.validation.Valid;
-import java.util.ArrayList;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -30,25 +32,37 @@ public class TaskController {
     private final TaskService taskService;
     private final TaskStatisticsService taskStatisticsService;
     private final TaskMapper taskMapper;
+    private final FavoritesService favoritesService;
+
+    @Value("${app.api.version:2.0.0}")
+    private String apiVersion;
 
     @GetMapping
-    public ResponseEntity<List<TaskResponseDto>> getAllTasks() {
+    public ResponseEntity<List<TaskResponseDto>> getAllTasks(
+            @RequestParam(required = false) Boolean withFavorites,
+            HttpSession session) {
+
         List<Task> tasks = taskService.getAll();
-        List<TaskResponseDto> responseDtos = new ArrayList<>();
-        for (Task task : tasks) {
-            TaskResponseDto responseDto = taskMapper.toResponseDto(task);
-            responseDtos.add(responseDto);
-        }
-        return ResponseEntity.ok(responseDtos);
+        List<TaskResponseDto> taskDtos = tasks.stream()
+                .map(taskMapper::toResponseDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok()
+                .header("x-API-Version", apiVersion)
+                .header("x-Total-Count", String.valueOf(tasks.size()))
+                .body(taskDtos);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDto> getById(@PathVariable Long id) {
         Task task = taskService.getById(id);
         if (task == null) {
-            return ResponseEntity.notFound().build();
+            throw new TaskNotFoundException(id);
         }
-        return ResponseEntity.ok(taskMapper.toResponseDto(task));
+
+        return ResponseEntity.ok()
+                .header("x-API-Version", apiVersion)
+                .body(taskMapper.toResponseDto(task));
     }
 
     @PostMapping
@@ -56,11 +70,10 @@ public class TaskController {
             @Validated(OnCreate.class) @RequestBody TaskCreateDto createDto) {
 
         Task task = taskMapper.toEntity(createDto);
-        Task savedTask = taskService.addTask(task);  // ← получаем сохраненную задачу с ID
-
-        log.info("Task created with ID: {}", savedTask.getId());
+        Task savedTask = taskService.addTask(task);
 
         return ResponseEntity.status(HttpStatus.CREATED)
+                .header("x-API-Version", apiVersion)
                 .body(taskMapper.toResponseDto(savedTask));
     }
 
@@ -71,34 +84,40 @@ public class TaskController {
 
         Task existingTask = taskService.getById(id);
         if (existingTask == null) {
-            return ResponseEntity.notFound().build();
+            throw new TaskNotFoundException(id);
         }
 
-        // Валидация dueDate относительно createdDate
         if (updateDto.getDueDate() != null &&
                 updateDto.getDueDate().isBefore(existingTask.getCreatedAt().toLocalDate())) {
-            return ResponseEntity.badRequest().build();
+            throw new IllegalArgumentException("Due date cannot be before creation date");
         }
 
         taskMapper.updateEntity(updateDto, existingTask);
         Task updatedTask = taskService.updateTask(id, existingTask);
 
-        return ResponseEntity.ok(taskMapper.toResponseDto(updatedTask));
+        return ResponseEntity.ok()
+                .header("x-API-Version", apiVersion)
+                .body(taskMapper.toResponseDto(updatedTask));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         Task existingTask = taskService.getById(id);
         if (existingTask == null) {
-            return ResponseEntity.notFound().build();
+            throw new TaskNotFoundException(id);
         }
 
         taskService.deleteTask(id);
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity.noContent()
+                .header("x-API-Version", apiVersion)
+                .build();
     }
 
     @GetMapping("/stats")
     public ResponseEntity<String> getStatistics() {
-        return ResponseEntity.ok(taskStatisticsService.getComparisonReport());
+        return ResponseEntity.ok()
+                .header("x-API-Version", apiVersion)
+                .body(taskStatisticsService.getComparisonReport());
     }
 }

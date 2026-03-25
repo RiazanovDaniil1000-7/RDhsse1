@@ -4,6 +4,7 @@ import com.example.dto.TaskResponseDto;
 import com.example.service.FavoritesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public class FavoritesController {
 
     private final FavoritesService favoritesService;
 
+    @Value("${app.api.version:2.0.0}")
+    private String apiVersion;
+
     @PostMapping("/{taskId}")
     public ResponseEntity<Map<String, Object>> addToFavorites(
             @PathVariable Long taskId,
@@ -30,6 +34,7 @@ public class FavoritesController {
 
         if (!added) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .header("x-API-Version", apiVersion)
                     .body(Map.of("error", "Task not found with id: " + taskId));
         }
 
@@ -39,7 +44,9 @@ public class FavoritesController {
         response.put("taskId", taskId);
         response.put("favoritesCount", favoritesService.getFavoritesCount(session));
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok()
+                .header("x-API-Version", apiVersion)
+                .body(response);
     }
 
     @DeleteMapping("/{taskId}")
@@ -51,6 +58,7 @@ public class FavoritesController {
 
         if (!removed) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .header("x-API-Version", apiVersion)
                     .body(Map.of("error", "Task not found in favorites or task doesn't exist"));
         }
 
@@ -60,13 +68,19 @@ public class FavoritesController {
         response.put("taskId", taskId);
         response.put("favoritesCount", favoritesService.getFavoritesCount(session));
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok()
+                .header("x-API-Version", apiVersion)
+                .body(response);
     }
 
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> getFavorites(HttpSession session) {
         List<TaskResponseDto> favorites = favoritesService.getFavoriteTasks(session);
-        return ResponseEntity.ok(favorites);
+
+        return ResponseEntity.ok()
+                .header("x-API-Version", apiVersion)
+                .header("x-Total-Count", String.valueOf(favorites.size()))
+                .body(favorites);
     }
 
     @GetMapping("/check/{taskId}")
@@ -80,17 +94,8 @@ public class FavoritesController {
         response.put("taskId", taskId);
         response.put("isFavorite", isFavorite);
 
-        return ResponseEntity.ok(response);
-    }
-
-    @DeleteMapping
-    public ResponseEntity<Map<String, Object>> clearFavorites(HttpSession session) {
-        favoritesService.clearFavorites(session);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "All favorites cleared");
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok()
+                .header("x-API-Version", apiVersion)
+                .body(response);
     }
 }
