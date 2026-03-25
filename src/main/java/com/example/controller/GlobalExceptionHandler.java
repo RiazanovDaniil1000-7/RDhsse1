@@ -16,6 +16,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.Instant;
@@ -120,6 +121,30 @@ public class GlobalExceptionHandler {
                 .build();
 
         log.warn("Missing parameter: {}", ex.getParameterName());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .header("x-API-Version", apiVersion)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestPart(
+            MissingServletRequestPartException ex,
+            HttpServletRequest request) {
+
+        Map<String, Object> details = new HashMap<>();
+        details.put("missingPart", ex.getRequestPartName());
+
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Bad Request")
+                .message("Required part '" + ex.getRequestPartName() + "' is missing")
+                .path(request.getRequestURI())
+                .details(details)
+                .build();
+
+        log.warn("Missing request part: {}", ex.getRequestPartName());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .header("x-API-Version", apiVersion)
@@ -245,12 +270,10 @@ public class GlobalExceptionHandler {
                 .message("An unexpected error occurred")
                 .path(request.getRequestURI());
 
-        // В режиме отладки добавляем stacktrace в details
         if (debug) {
             Map<String, Object> details = new HashMap<>();
             details.put("exception", ex.getClass().getName());
             details.put("message", ex.getMessage());
-            details.put("stacktrace", getStackTraceAsString(ex));
             builder.details(details);
             log.error("Unexpected error: ", ex);
         } else {
@@ -262,17 +285,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .header("x-API-Version", apiVersion)
                 .body(errorResponse);
-    }
-
-    private String getStackTraceAsString(Exception ex) {
-        StringBuilder sb = new StringBuilder();
-        for (StackTraceElement element : ex.getStackTrace()) {
-            sb.append(element.toString()).append("\n");
-            if (sb.length() > 1000) {
-                sb.append("...");
-                break;
-            }
-        }
-        return sb.toString();
     }
 }

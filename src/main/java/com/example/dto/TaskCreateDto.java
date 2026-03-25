@@ -4,6 +4,7 @@ import com.example.model.Priority;
 import com.example.validation.OnCreate;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
+import java.time.LocalDate;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -34,7 +35,7 @@ public class TaskCreateDto {
             example = "2025-12-31T23:59:59",
             requiredMode = Schema.RequiredMode.REQUIRED)
     @FutureOrPresent(message = "Due date cannot be in the past", groups = OnCreate.class)
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
 
     @Schema(description = "Приоритет задачи",
             example = "HIGH",

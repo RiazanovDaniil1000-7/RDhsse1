@@ -2,6 +2,7 @@ package com.example.dto;
 
 import com.example.model.Priority;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,9 +38,9 @@ public class TaskResponseDto {
             accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime createdAt;
 
-    @Schema(description = "Дата и время выполнения",
-            example = "2025-12-31T23:59:59")
-    private LocalDateTime dueDate;
+    @Schema(description = "Дата выполнения",
+            example = "2025-12-31")
+    private LocalDate dueDate;
 
     @Schema(description = "Приоритет задачи",
             example = "HIGH",
