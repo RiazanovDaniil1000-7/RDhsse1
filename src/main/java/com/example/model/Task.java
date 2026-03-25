@@ -1,81 +1,29 @@
 package com.example.model;
 
-import java.util.Objects;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
+@Getter
+@EqualsAndHashCode(exclude = {"createdAt", "dueDate", "priority", "tags"})
+@ToString(exclude = {"createdAt", "dueDate", "priority", "tags"})
 public class Task {
 
-    private int id;
+    private Long id;
     private String title;
     private String description;
     private boolean completed;
-
-    public Task(int id, String title, String description, boolean completed) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.completed = completed;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isCompleted() {
-        return completed;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Task task = (Task) o;
-        return id == task.id &&
-            completed == task.completed &&
-            Objects.equals(title, task.title) &&
-            Objects.equals(description, task.description);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, title, description, completed);
-    }
-
-    @Override
-    public String toString() {
-        return "Task{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", description='" + description + '\'' +
-            ", completed=" + completed +
-            '}';
-    }
+    private LocalDateTime createdAt;
+    private LocalDate dueDate;
+    private Priority priority;
+    private Set<String> tags;
 }

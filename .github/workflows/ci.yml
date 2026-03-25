@@ -2,29 +2,42 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "feature/hometask_2" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "feature/hw1-To_Do_List_Manager"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: maven
 
       - name: Build with Maven
-        run: mvn -B compile
+        run: mvn -B clean compile
 
       - name: Run tests
         run: mvn -B test
 
-      - name: Test Report
+      - name: Package with Maven
+        run: mvn -B package -DskipTests
+
+      - name: Upload test reports
         if: always()
-        run: echo "Tests completed with status ${{ job.status }}"
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: target/surefire-reports/
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-jar
+          path: target/*.jar

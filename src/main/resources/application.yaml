@@ -5,11 +5,33 @@ app:
   name: "ToDo-Manager-MVP"
   version: "1.0.0-SNAPSHOT"
   description: "Spring Boot Homework Application"
+  api:
+    version: "2.0.0"
+  upload:
+    dir: uploads
+  debug: true
 
 spring:
   profiles:
     active: dev
-
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+      file-size-threshold: 2KB
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
 ---
 spring:
   config:
@@ -22,7 +44,6 @@ logging:
     com.example: DEBUG
 
 ---
-
 spring:
   config:
     activate:
@@ -32,3 +53,11 @@ logging:
   level:
     root: WARN
     com.example: ERROR
+
+app:
+  debug: false
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
