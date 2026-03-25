@@ -1,54 +1,43 @@
-image: maven:3.9-eclipse-temurin-17
+name: Java CI with Maven
 
-variables:
-  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  MAVEN_CLI_OPTS: "-s $CI_PROJECT_DIR/.m2/settings.xml --batch-mode"
+on:
+  push:
+    branches: [ "main", "develop", "hometask_2" ]
+  pull_request:
+    branches: [ "main", "develop" ]
 
-cache:
-  paths:
-    - .m2/repository/
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
 
-stages:
-  - build
-  - test
-  - package
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
 
-build:
-  stage: build
-  script:
-    - mvn $MAVEN_CLI_OPTS compile
-  artifacts:
-    paths:
-      - target/classes/
-  only:
-    - merge_requests
-    - main
-    - develop
-    - hometask_2
+      - name: Build with Maven
+        run: mvn -B clean compile
 
-test:
-  stage: test
-  script:
-    - mvn $MAVEN_CLI_OPTS test
-  artifacts:
-    reports:
-      junit:
-        - target/surefire-reports/TEST-*.xml
-    paths:
-      - target/surefire-reports/
-  only:
-    - merge_requests
-    - main
-    - develop
-    - hometask_2
+      - name: Run tests
+        run: mvn -B test
 
-package:
-  stage: package
-  script:
-    - mvn $MAVEN_CLI_OPTS package -DskipTests
-  artifacts:
-    paths:
-      - target/*.jar
-  only:
-    - main
-    - hometask_2
+      - name: Package with Maven
+        run: mvn -B package -DskipTests
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: target/surefire-reports/
+
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-jar
+          path: target/*.jar
