@@ -12,6 +12,8 @@ app:
   debug: true
 
 spring:
+  application:
+    name: spring-demo
   profiles:
     active: dev
   servlet:
@@ -20,6 +22,7 @@ spring:
       max-request-size: 10MB
       enabled: true
       file-size-threshold: 2KB
+
 springdoc:
   api-docs:
     path: /v3/api-docs
@@ -32,11 +35,21 @@ springdoc:
   show-actuator: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
 ---
 spring:
   config:
     activate:
       on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/todo_db
+    username: postgres
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
 
 logging:
   level:
@@ -47,7 +60,35 @@ logging:
 spring:
   config:
     activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+
+---
+
+spring:
+  config:
+    activate:
       on-profile: prod
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 logging:
   level:
@@ -56,8 +97,3 @@ logging:
 
 app:
   debug: false
-
-  servlet:
-    multipart:
-      max-file-size: 5MB
-      max-request-size: 5MB
