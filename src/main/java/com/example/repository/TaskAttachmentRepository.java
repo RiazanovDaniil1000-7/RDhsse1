@@ -27,7 +27,7 @@ public class TaskAttachmentRepository {
     public List<TaskAttachment> findByTaskId(Long taskId) {
         List<TaskAttachment> list = new ArrayList<>();
         for (TaskAttachment attachment : attachments.values()) {
-            if (attachment.getTaskId().equals(taskId)) {
+            if (attachment.getTask().getId().equals(taskId)) {
                 list.add(attachment);
             }
         }
@@ -39,6 +39,6 @@ public class TaskAttachmentRepository {
     }
 
     public void deleteByTaskId(Long taskId) {
-        attachments.values().removeIf(attachment -> attachment.getTaskId().equals(taskId));
+        attachments.values().removeIf(attachment -> attachment.getTask().getId().equals(taskId));
     }
 }

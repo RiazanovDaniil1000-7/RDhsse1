@@ -66,7 +66,7 @@ public class AttachmentService {
 
         // Создаем запись в репозитории
         TaskAttachment attachment = new TaskAttachment();
-        attachment.setTaskId(taskId);
+        attachment.setTask(task);
         attachment.setFileName(originalFileName);
         attachment.setStoredFileName(storedFileName);
         attachment.setContentType(file.getContentType());
