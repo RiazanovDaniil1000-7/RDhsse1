@@ -2,9 +2,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main", "develop", "hometask_3" ]
+    branches: [ "feature/hometask_3" ]
   pull_request:
-    branches: [ "main", "develop" ]
+    branches: [ "feature/hw1-To_Do_List_Manager"]
 
 jobs:
   build:
