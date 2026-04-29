@@ -5,6 +5,7 @@ import com.example.exception.TaskNotFoundException;
 import com.example.mapper.TaskMapper;
 import com.example.model.Task;
 import com.example.repository.TaskRepository;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // По умолчанию все методы только для чтения
+@Transactional(readOnly = true)
 public class TaskService {
 
     private final TaskRepository taskRepository;
@@ -28,13 +29,11 @@ public class TaskService {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("ID must be positive");
         }
-        // JpaRepository возвращает Optional. Используем orElseThrow,
-        // чтобы сразу выбросить исключение, если задачи нет.
         return taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
     }
 
-    @Transactional // Этот метод изменяет данные, поэтому нужна транзакция
+    @Transactional
     public Task addTask(Task task) {
         if (task == null) {
             throw new IllegalArgumentException("Task cannot be null");
@@ -52,7 +51,9 @@ public class TaskService {
         return taskRepository.save(taskDetails);
     }
     public List<TaskResponseDto> getTasksDueSoon() {
-        return taskRepository.findTasksDueInNextSevenDays()
+        LocalDate sevenDaysFromNow = LocalDate.now().plusDays(7);
+
+        return taskRepository.findTasksDueBefore(sevenDaysFromNow)
                 .stream()
                 .map(taskMapper::toResponseDto)
                 .toList();
