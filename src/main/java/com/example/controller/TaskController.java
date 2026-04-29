@@ -63,7 +63,7 @@ public class TaskController {
             @RequestParam(required = false) Boolean withFavorites,
             HttpSession session) {
 
-        List<Task> tasks = taskService.getAll();
+        List<Task> tasks = taskService.getAllTasks();
         List<TaskResponseDto> taskDtos = tasks.stream()
                 .map(taskMapper::toResponseDto)
                 .collect(Collectors.toList());
